@@ -494,6 +494,8 @@ services:
   api:
     image: langgenius/dify-api:1.4.0
     restart: always
+    ports:
+      - "5001:5001"
     environment:
       # Use the shared environment variables.
       <<: *shared-api-worker-env
@@ -552,8 +554,8 @@ services:
     # build:
     #   context: ../web
     #   dockerfile: Dockerfile
-    # ports:
-    #   - "3000:3000"
+    ports:
+      - "3000:3000"
     restart: always
     environment:
       CONSOLE_API_URL: ${CONSOLE_API_URL:-}
