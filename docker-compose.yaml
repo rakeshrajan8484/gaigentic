@@ -19,6 +19,7 @@ x-shared-env: &shared-api-worker-env
   LOG_TZ: ${LOG_TZ:-UTC}
   DEBUG: ${DEBUG:-false}
   FLASK_DEBUG: ${FLASK_DEBUG:-false}
+  ENABLE_REQUEST_LOGGING: ${ENABLE_REQUEST_LOGGING:-False}
   SECRET_KEY: ${SECRET_KEY:-sk-9f73s3ljTXVcMT3Blb3ljTqtsKiGHXVcMT3BlbkFJLK7U}
   INIT_PASSWORD: ${INIT_PASSWORD:-}
   DEPLOY_ENV: ${DEPLOY_ENV:-PRODUCTION}
@@ -49,7 +50,7 @@ x-shared-env: &shared-api-worker-env
   DB_USERNAME: ${DB_USERNAME:-postgres}
   DB_PASSWORD: ${DB_PASSWORD:-difyai123456}
   DB_HOST: ${DB_HOST:-db}
-  DB_PORT: ${DB_PORT:-5432}
+  #DB_PORT: ${DB_PORT:-5432}
   DB_DATABASE: ${DB_DATABASE:-dify}
   SQLALCHEMY_POOL_SIZE: ${SQLALCHEMY_POOL_SIZE:-30}
   SQLALCHEMY_POOL_RECYCLE: ${SQLALCHEMY_POOL_RECYCLE:-3600}
@@ -137,6 +138,7 @@ x-shared-env: &shared-api-worker-env
   QDRANT_CLIENT_TIMEOUT: ${QDRANT_CLIENT_TIMEOUT:-20}
   QDRANT_GRPC_ENABLED: ${QDRANT_GRPC_ENABLED:-false}
   QDRANT_GRPC_PORT: ${QDRANT_GRPC_PORT:-6334}
+  QDRANT_REPLICATION_FACTOR: ${QDRANT_REPLICATION_FACTOR:-1}
   MILVUS_URI: ${MILVUS_URI:-http://host.docker.internal:19530}
   MILVUS_DATABASE: ${MILVUS_DATABASE:-}
   MILVUS_TOKEN: ${MILVUS_TOKEN:-}
@@ -156,7 +158,7 @@ x-shared-env: &shared-api-worker-env
   COUCHBASE_BUCKET_NAME: ${COUCHBASE_BUCKET_NAME:-Embeddings}
   COUCHBASE_SCOPE_NAME: ${COUCHBASE_SCOPE_NAME:-_default}
   PGVECTOR_HOST: ${PGVECTOR_HOST:-pgvector}
-  PGVECTOR_PORT: ${PGVECTOR_PORT:-5432}
+  #PGVECTOR_PORT: ${PGVECTOR_PORT:-5432}
   PGVECTOR_USER: ${PGVECTOR_USER:-postgres}
   PGVECTOR_PASSWORD: ${PGVECTOR_PASSWORD:-difyai123456}
   PGVECTOR_DATABASE: ${PGVECTOR_DATABASE:-dify}
@@ -165,14 +167,14 @@ x-shared-env: &shared-api-worker-env
   PGVECTOR_PG_BIGM: ${PGVECTOR_PG_BIGM:-false}
   PGVECTOR_PG_BIGM_VERSION: ${PGVECTOR_PG_BIGM_VERSION:-1.2-20240606}
   VASTBASE_HOST: ${VASTBASE_HOST:-vastbase}
-  VASTBASE_PORT: ${VASTBASE_PORT:-5432}
+  #VASTBASE_PORT: ${VASTBASE_PORT:-5432}
   VASTBASE_USER: ${VASTBASE_USER:-dify}
   VASTBASE_PASSWORD: ${VASTBASE_PASSWORD:-Difyai123456}
   VASTBASE_DATABASE: ${VASTBASE_DATABASE:-dify}
   VASTBASE_MIN_CONNECTION: ${VASTBASE_MIN_CONNECTION:-1}
   VASTBASE_MAX_CONNECTION: ${VASTBASE_MAX_CONNECTION:-5}
   PGVECTO_RS_HOST: ${PGVECTO_RS_HOST:-pgvecto-rs}
-  PGVECTO_RS_PORT: ${PGVECTO_RS_PORT:-5432}
+  #PGVECTO_RS_PORT: ${PGVECTO_RS_PORT:-5432}
   PGVECTO_RS_USER: ${PGVECTO_RS_USER:-postgres}
   PGVECTO_RS_PASSWORD: ${PGVECTO_RS_PASSWORD:-difyai123456}
   PGVECTO_RS_DATABASE: ${PGVECTO_RS_DATABASE:-dify}
@@ -185,7 +187,7 @@ x-shared-env: &shared-api-worker-env
   ANALYTICDB_NAMESPACE: ${ANALYTICDB_NAMESPACE:-dify}
   ANALYTICDB_NAMESPACE_PASSWORD: ${ANALYTICDB_NAMESPACE_PASSWORD:-difypassword}
   ANALYTICDB_HOST: ${ANALYTICDB_HOST:-gp-test.aliyuncs.com}
-  ANALYTICDB_PORT: ${ANALYTICDB_PORT:-5432}
+  #ANALYTICDB_PORT: ${ANALYTICDB_PORT:-5432}
   ANALYTICDB_MIN_CONNECTION: ${ANALYTICDB_MIN_CONNECTION:-1}
   ANALYTICDB_MAX_CONNECTION: ${ANALYTICDB_MAX_CONNECTION:-5}
   TIDB_VECTOR_HOST: ${TIDB_VECTOR_HOST:-tidb}
@@ -219,13 +221,14 @@ x-shared-env: &shared-api-worker-env
   ORACLE_WALLET_PASSWORD: ${ORACLE_WALLET_PASSWORD:-dify}
   ORACLE_IS_AUTONOMOUS: ${ORACLE_IS_AUTONOMOUS:-false}
   RELYT_HOST: ${RELYT_HOST:-db}
-  RELYT_PORT: ${RELYT_PORT:-5432}
+  #RELYT_PORT: ${RELYT_PORT:-5432}
   RELYT_USER: ${RELYT_USER:-postgres}
   RELYT_PASSWORD: ${RELYT_PASSWORD:-difyai123456}
   RELYT_DATABASE: ${RELYT_DATABASE:-postgres}
   OPENSEARCH_HOST: ${OPENSEARCH_HOST:-opensearch}
   OPENSEARCH_PORT: ${OPENSEARCH_PORT:-9200}
   OPENSEARCH_SECURE: ${OPENSEARCH_SECURE:-true}
+  OPENSEARCH_VERIFY_CERTS: ${OPENSEARCH_VERIFY_CERTS:-true}
   OPENSEARCH_AUTH_METHOD: ${OPENSEARCH_AUTH_METHOD:-basic}
   OPENSEARCH_USER: ${OPENSEARCH_USER:-admin}
   OPENSEARCH_PASSWORD: ${OPENSEARCH_PASSWORD:-admin}
@@ -475,6 +478,12 @@ x-shared-env: &shared-api-worker-env
   PLUGIN_TENCENT_COS_SECRET_KEY: ${PLUGIN_TENCENT_COS_SECRET_KEY:-}
   PLUGIN_TENCENT_COS_SECRET_ID: ${PLUGIN_TENCENT_COS_SECRET_ID:-}
   PLUGIN_TENCENT_COS_REGION: ${PLUGIN_TENCENT_COS_REGION:-}
+  PLUGIN_ALIYUN_OSS_REGION: ${PLUGIN_ALIYUN_OSS_REGION:-}
+  PLUGIN_ALIYUN_OSS_ENDPOINT: ${PLUGIN_ALIYUN_OSS_ENDPOINT:-}
+  PLUGIN_ALIYUN_OSS_ACCESS_KEY_ID: ${PLUGIN_ALIYUN_OSS_ACCESS_KEY_ID:-}
+  PLUGIN_ALIYUN_OSS_ACCESS_KEY_SECRET: ${PLUGIN_ALIYUN_OSS_ACCESS_KEY_SECRET:-}
+  PLUGIN_ALIYUN_OSS_AUTH_VERSION: ${PLUGIN_ALIYUN_OSS_AUTH_VERSION:-v4}
+  PLUGIN_ALIYUN_OSS_PATH: ${PLUGIN_ALIYUN_OSS_PATH:-}
   ENABLE_OTEL: ${ENABLE_OTEL:-false}
   OTLP_BASE_ENDPOINT: ${OTLP_BASE_ENDPOINT:-http://localhost:4318}
   OTLP_API_KEY: ${OTLP_API_KEY:-}
@@ -492,7 +501,9 @@ x-shared-env: &shared-api-worker-env
 services:
   # API service
   api:
-    image: langgenius/dify-api:1.4.0
+    image: gaigentic/api
+    ports:
+      - ${EXPOSE_API_PORT:-5001}:5001
     restart: always
     environment:
       # Use the shared environment variables.
@@ -506,7 +517,6 @@ services:
       PLUGIN_REMOTE_INSTALL_PORT: ${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}
       PLUGIN_MAX_PACKAGE_SIZE: ${PLUGIN_MAX_PACKAGE_SIZE:-52428800}
       INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
-      DATABASE_URL: postgresql://postgres:difyai123456@db:5432/dify
     depends_on:
       db:
         condition: service_healthy
@@ -522,7 +532,9 @@ services:
   # worker service
   # The Celery worker for processing the queue.
   worker:
-    image: langgenius/dify-api:1.4.0
+    image: gaigentic/api
+    ports:
+      - ${EXPOSE_API_PORT:-5001}:5001
     restart: always
     environment:
       # Use the shared environment variables.
@@ -548,12 +560,9 @@ services:
 
   # Frontend web application.
   web:
-    image: gaigentic/web-ui:latest
-    # build:
-    #   context: ../web
-    #   dockerfile: Dockerfile
-    # ports:
-    #   - "3000:3000"
+    image: gaigentic/web
+    ports:
+      - ${EXPOSE_API_PORT:-3000}:3000
     restart: always
     environment:
       CONSOLE_API_URL: ${CONSOLE_API_URL:-}
@@ -581,7 +590,7 @@ services:
     restart: always
     environment:
       PGUSER: ${PGUSER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-difyai123456}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Merc@1234}
       POSTGRES_DB: ${POSTGRES_DB:-dify}
       PGDATA: ${PGDATA:-/var/lib/postgresql/data/pgdata}
     command: >
@@ -638,7 +647,7 @@ services:
 
   # plugin daemon
   plugin_daemon:
-    image: langgenius/dify-plugin-daemon:0.0.10-local
+    image: langgenius/dify-plugin-daemon:0.1.1-local
     restart: always
     environment:
       # Use the shared environment variables.
@@ -674,6 +683,12 @@ services:
       TENCENT_COS_SECRET_KEY: ${PLUGIN_TENCENT_COS_SECRET_KEY:-}
       TENCENT_COS_SECRET_ID: ${PLUGIN_TENCENT_COS_SECRET_ID:-}
       TENCENT_COS_REGION: ${PLUGIN_TENCENT_COS_REGION:-}
+      ALIYUN_OSS_REGION: ${PLUGIN_ALIYUN_OSS_REGION:-}
+      ALIYUN_OSS_ENDPOINT: ${PLUGIN_ALIYUN_OSS_ENDPOINT:-}
+      ALIYUN_OSS_ACCESS_KEY_ID: ${PLUGIN_ALIYUN_OSS_ACCESS_KEY_ID:-}
+      ALIYUN_OSS_ACCESS_KEY_SECRET: ${PLUGIN_ALIYUN_OSS_ACCESS_KEY_SECRET:-}
+      ALIYUN_OSS_AUTH_VERSION: ${PLUGIN_ALIYUN_OSS_AUTH_VERSION:-v4}
+      ALIYUN_OSS_PATH: ${PLUGIN_ALIYUN_OSS_PATH:-}
     ports:
       - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
     volumes:
@@ -870,8 +885,6 @@ services:
       - VB_DB=dify
       - VB_USERNAME=dify
       - VB_PASSWORD=Difyai123456
-    ports:
-      - '5434:5432'
     volumes:
       - ./vastbase/lic:/home/vastbase/vastbase/lic
       - ./vastbase/data:/home/vastbase/data
@@ -934,6 +947,7 @@ services:
       OB_SYS_PASSWORD: ${OCEANBASE_VECTOR_PASSWORD:-difyai123456}
       OB_TENANT_PASSWORD: ${OCEANBASE_VECTOR_PASSWORD:-difyai123456}
       OB_CLUSTER_NAME: ${OCEANBASE_CLUSTER_NAME:-difyai}
+      OB_SERVER_IP: 127.0.0.1
       MODE: MINI
     ports:
       - "${OCEANBASE_VECTOR_PORT:-2881}:2881"
