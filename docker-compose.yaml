@@ -502,8 +502,6 @@ services:
   # API service
   api:
     image: gaigentic/api-backend:latest
-    ports:
-      - ${EXPOSE_API_PORT:-5001}:5001
     restart: always
     environment:
       # Use the shared environment variables.
@@ -532,8 +530,6 @@ services:
   # Frontend web application.
   web:
     image: gaigentic/webapp:latest
-    ports:
-      - ${EXPOSE_API_PORT:-3000}:3000
     restart: always
     environment:
       CONSOLE_API_URL: ${CONSOLE_API_URL:-}
