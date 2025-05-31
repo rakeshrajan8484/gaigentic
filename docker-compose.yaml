@@ -50,7 +50,7 @@ x-shared-env: &shared-api-worker-env
   DB_USERNAME: ${DB_USERNAME:-postgres}
   DB_PASSWORD: ${DB_PASSWORD:-difyai123456}
   DB_HOST: ${DB_HOST:-db}
-  #DB_PORT: ${DB_PORT:-5432}
+  DB_PORT: ${DB_PORT:-5432}
   DB_DATABASE: ${DB_DATABASE:-dify}
   SQLALCHEMY_POOL_SIZE: ${SQLALCHEMY_POOL_SIZE:-30}
   SQLALCHEMY_POOL_RECYCLE: ${SQLALCHEMY_POOL_RECYCLE:-3600}
@@ -158,7 +158,7 @@ x-shared-env: &shared-api-worker-env
   COUCHBASE_BUCKET_NAME: ${COUCHBASE_BUCKET_NAME:-Embeddings}
   COUCHBASE_SCOPE_NAME: ${COUCHBASE_SCOPE_NAME:-_default}
   PGVECTOR_HOST: ${PGVECTOR_HOST:-pgvector}
-  #PGVECTOR_PORT: ${PGVECTOR_PORT:-5432}
+  PGVECTOR_PORT: ${PGVECTOR_PORT:-5432}
   PGVECTOR_USER: ${PGVECTOR_USER:-postgres}
   PGVECTOR_PASSWORD: ${PGVECTOR_PASSWORD:-difyai123456}
   PGVECTOR_DATABASE: ${PGVECTOR_DATABASE:-dify}
@@ -167,14 +167,14 @@ x-shared-env: &shared-api-worker-env
   PGVECTOR_PG_BIGM: ${PGVECTOR_PG_BIGM:-false}
   PGVECTOR_PG_BIGM_VERSION: ${PGVECTOR_PG_BIGM_VERSION:-1.2-20240606}
   VASTBASE_HOST: ${VASTBASE_HOST:-vastbase}
-  #VASTBASE_PORT: ${VASTBASE_PORT:-5432}
+  VASTBASE_PORT: ${VASTBASE_PORT:-5432}
   VASTBASE_USER: ${VASTBASE_USER:-dify}
   VASTBASE_PASSWORD: ${VASTBASE_PASSWORD:-Difyai123456}
   VASTBASE_DATABASE: ${VASTBASE_DATABASE:-dify}
   VASTBASE_MIN_CONNECTION: ${VASTBASE_MIN_CONNECTION:-1}
   VASTBASE_MAX_CONNECTION: ${VASTBASE_MAX_CONNECTION:-5}
   PGVECTO_RS_HOST: ${PGVECTO_RS_HOST:-pgvecto-rs}
-  #PGVECTO_RS_PORT: ${PGVECTO_RS_PORT:-5432}
+  PGVECTO_RS_PORT: ${PGVECTO_RS_PORT:-5432}
   PGVECTO_RS_USER: ${PGVECTO_RS_USER:-postgres}
   PGVECTO_RS_PASSWORD: ${PGVECTO_RS_PASSWORD:-difyai123456}
   PGVECTO_RS_DATABASE: ${PGVECTO_RS_DATABASE:-dify}
@@ -187,7 +187,7 @@ x-shared-env: &shared-api-worker-env
   ANALYTICDB_NAMESPACE: ${ANALYTICDB_NAMESPACE:-dify}
   ANALYTICDB_NAMESPACE_PASSWORD: ${ANALYTICDB_NAMESPACE_PASSWORD:-difypassword}
   ANALYTICDB_HOST: ${ANALYTICDB_HOST:-gp-test.aliyuncs.com}
-  #ANALYTICDB_PORT: ${ANALYTICDB_PORT:-5432}
+  ANALYTICDB_PORT: ${ANALYTICDB_PORT:-5432}
   ANALYTICDB_MIN_CONNECTION: ${ANALYTICDB_MIN_CONNECTION:-1}
   ANALYTICDB_MAX_CONNECTION: ${ANALYTICDB_MAX_CONNECTION:-5}
   TIDB_VECTOR_HOST: ${TIDB_VECTOR_HOST:-tidb}
@@ -221,7 +221,7 @@ x-shared-env: &shared-api-worker-env
   ORACLE_WALLET_PASSWORD: ${ORACLE_WALLET_PASSWORD:-dify}
   ORACLE_IS_AUTONOMOUS: ${ORACLE_IS_AUTONOMOUS:-false}
   RELYT_HOST: ${RELYT_HOST:-db}
-  #RELYT_PORT: ${RELYT_PORT:-5432}
+  RELYT_PORT: ${RELYT_PORT:-5432}
   RELYT_USER: ${RELYT_USER:-postgres}
   RELYT_PASSWORD: ${RELYT_PASSWORD:-difyai123456}
   RELYT_DATABASE: ${RELYT_DATABASE:-postgres}
@@ -354,7 +354,7 @@ x-shared-env: &shared-api-worker-env
   LOOP_NODE_MAX_COUNT: ${LOOP_NODE_MAX_COUNT:-100}
   MAX_TOOLS_NUM: ${MAX_TOOLS_NUM:-10}
   MAX_PARALLEL_LIMIT: ${MAX_PARALLEL_LIMIT:-10}
-  MAX_ITERATIONS_NUM: ${MAX_ITERATIONS_NUM:-5}
+  MAX_ITERATIONS_NUM: ${MAX_ITERATIONS_NUM:-99}
   TEXT_GENERATION_TIMEOUT_MS: ${TEXT_GENERATION_TIMEOUT_MS:-60000}
   PGUSER: ${PGUSER:-${DB_USERNAME}}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-${DB_PASSWORD}}
@@ -527,6 +527,33 @@ services:
       - ssrf_proxy_network
       - default
 
+  # worker service
+  # The Celery worker for processing the queue.
+  worker:
+    image: gaigentic/api-backend:latest
+    restart: always
+    environment:
+      # Use the shared environment variables.
+      <<: *shared-api-worker-env
+      # Startup mode, 'worker' starts the Celery worker for processing the queue.
+      MODE: worker
+      SENTRY_DSN: ${API_SENTRY_DSN:-}
+      SENTRY_TRACES_SAMPLE_RATE: ${API_SENTRY_TRACES_SAMPLE_RATE:-1.0}
+      SENTRY_PROFILES_SAMPLE_RATE: ${API_SENTRY_PROFILES_SAMPLE_RATE:-1.0}
+      PLUGIN_MAX_PACKAGE_SIZE: ${PLUGIN_MAX_PACKAGE_SIZE:-52428800}
+      INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      # Mount the storage directory to the container, for storing user files.
+      - ./volumes/app/storage:/app/api/storage
+    networks:
+      - ssrf_proxy_network
+      - default
+
   # Frontend web application.
   web:
     image: gaigentic/webapp:latest
@@ -547,7 +574,7 @@ services:
       LOOP_NODE_MAX_COUNT: ${LOOP_NODE_MAX_COUNT:-100}
       MAX_TOOLS_NUM: ${MAX_TOOLS_NUM:-10}
       MAX_PARALLEL_LIMIT: ${MAX_PARALLEL_LIMIT:-10}
-      MAX_ITERATIONS_NUM: ${MAX_ITERATIONS_NUM:-5}
+      MAX_ITERATIONS_NUM: ${MAX_ITERATIONS_NUM:-99}
       ENABLE_WEBSITE_JINAREADER: ${ENABLE_WEBSITE_JINAREADER:-true}
       ENABLE_WEBSITE_FIRECRAWL: ${ENABLE_WEBSITE_FIRECRAWL:-true}
       ENABLE_WEBSITE_WATERCRAWL: ${ENABLE_WEBSITE_WATERCRAWL:-true}
@@ -557,7 +584,7 @@ services:
     restart: always
     environment:
       PGUSER: ${PGUSER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Merc@1234}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-difyai123456}
       POSTGRES_DB: ${POSTGRES_DB:-dify}
       PGDATA: ${PGDATA:-/var/lib/postgresql/data/pgdata}
     command: >
@@ -618,19 +645,13 @@ services:
     restart: always
     environment:
       # Use the shared environment variables.
-      DB_HOST: ${DB_HOST:-db}
-      DB_PORT: ${DB_PORT:-5432}
-      DB_USERNAME: ${DB_USER:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD:-Merc@1234}
+      <<: *shared-api-worker-env
       DB_DATABASE: ${DB_PLUGIN_DATABASE:-dify_plugin}
-      REDIS_HOST: ${REDIS_HOST:-redis}
-      REDIS_PORT: ${REDIS_PORT:-6379}
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-difyai123456}
       SERVER_PORT: ${PLUGIN_DAEMON_PORT:-5002}
       SERVER_KEY: ${PLUGIN_DAEMON_KEY:-lYkiYYT6owG+71oLerGzA7GXCgOT++6ovaezWAjpCjf+Sjc3ZtU+qUEi}
       MAX_PLUGIN_PACKAGE_SIZE: ${PLUGIN_MAX_PACKAGE_SIZE:-52428800}
       PPROF_ENABLED: ${PLUGIN_PPROF_ENABLED:-false}
-      DIFY_INNER_API_URL: ${PLUGIN_DIFY_INNER_API_URL:-http://host.docker.internal:5001}
+      DIFY_INNER_API_URL: ${PLUGIN_DIFY_INNER_API_URL:-http://api:5001}
       DIFY_INNER_API_KEY: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
       PLUGIN_REMOTE_INSTALLING_HOST: ${PLUGIN_DEBUGGING_HOST:-0.0.0.0}
       PLUGIN_REMOTE_INSTALLING_PORT: ${PLUGIN_DEBUGGING_PORT:-5003}
@@ -663,7 +684,6 @@ services:
       ALIYUN_OSS_AUTH_VERSION: ${PLUGIN_ALIYUN_OSS_AUTH_VERSION:-v4}
       ALIYUN_OSS_PATH: ${PLUGIN_ALIYUN_OSS_PATH:-}
     ports:
-      - "${EXPOSE_PLUGIN_DAEMON_PORT:-5002}:${PLUGIN_DAEMON_PORT:-5002}"
       - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
     volumes:
       - ./volumes/plugin_daemon:/app/storage
@@ -859,6 +879,8 @@ services:
       - VB_DB=dify
       - VB_USERNAME=dify
       - VB_PASSWORD=Difyai123456
+    ports:
+      - '5434:5432'
     volumes:
       - ./vastbase/lic:/home/vastbase/vastbase/lic
       - ./vastbase/data:/home/vastbase/data
