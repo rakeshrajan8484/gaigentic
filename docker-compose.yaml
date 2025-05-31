@@ -501,7 +501,7 @@ x-shared-env: &shared-api-worker-env
 services:
   # API service
   api:
-    image: gaigentic/api
+    image: gaigentic/api-backend:latest
     ports:
       - ${EXPOSE_API_PORT:-5001}:5001
     restart: always
@@ -532,7 +532,7 @@ services:
   # worker service
   # The Celery worker for processing the queue.
   worker:
-    image: gaigentic/api
+    image: gaigentic/api-backend:latest
     ports:
       - ${EXPOSE_API_PORT:-5001}:5001
     restart: always
@@ -560,7 +560,7 @@ services:
 
   # Frontend web application.
   web:
-    image: gaigentic/web
+    image: gaigentic/webapp:latest
     ports:
       - ${EXPOSE_API_PORT:-3000}:3000
     restart: always
